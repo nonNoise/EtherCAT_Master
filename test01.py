@@ -19,7 +19,7 @@ cat_PDUfream[4:6] = 0x01,0x03   # ADO (2 byte)
 cat_PDUfream[6:8] = 0x01,0x00   # LEN (2 byte)
 cat_PDUfream[8:10] = 0x00,0x00   # IRQ (2 byte)
 cat_PDUfream[10] = 0x00         # DATA (1 byte)
-cat_PDUfream[11:13] = 0x00,0x00 # WKC (2 byte)
+cat_PDUfream[11:13] = 0x00,0x01 # WKC (2 byte)
 print(len(cat_PDUfream))
 cat_frame = [0]*2
 cat_frame[0] = len(cat_PDUfream)
@@ -32,8 +32,8 @@ cat_scoket.extend(cat_head)
 cat_scoket.extend(cat_frame)
 cat_scoket.extend(cat_PDUfream)
 
-for i in range(len(cat_scoket)):
-    print ('[%d]: 0x{:02x}'.format(cat_scoket[i]) % (i))
+#for i in range(len(cat_scoket)):
+#    print ('[%d]: 0x{:02x}'.format(cat_scoket[i]) % (i))
 
 import socket
 import struct
@@ -45,9 +45,9 @@ timeval = struct.pack('ll', 0, 1)
 cat.setsockopt(socket.SOL_SOCKET,socket.SO_RCVTIMEO,timeval)
 cat.setsockopt(socket.SOL_SOCKET,socket.SO_SNDTIMEO,timeval)
 cat.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, 1)
-
+print(cat_scoket)
 #cat.bind( ("0,0,0,0", Poat))
 cat.bind(("enp0s25", 0x88A4))
 cat.send(bytes(cat_scoket))
 #print(bytes(cat_scoket))
-print(cat.recv(4096))
+#print(cat.recv(4096))
