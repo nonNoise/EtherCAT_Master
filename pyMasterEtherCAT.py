@@ -2,7 +2,7 @@ import socket
 import struct
 
 class MasterEtherCAT:
-    def __init__(self,NickName):
+    def __init__(self,NicName):
         poat = 0x88A4
         self.cat = socket.socket(socket.PF_PACKET,socket.SOCK_RAW)
         timeval = struct.pack('ll', 0, 1)
@@ -91,12 +91,117 @@ class MasterEtherCAT:
         IRQ = 0x0000
         WKC = 0x0000
         self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
-    def BWR(self,IDX,ADP,ADO,DATA):
-        CMD = 0x08  # APRD
+
+    def FPRD(self,IDX,ADP,ADO,DATA):
+        CMD = 0x04  # FPRD
         C = 0
         NEXT = 0
         IRQ = 0x0000
         WKC = 0x0000
         self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
 
-    
+    def BRD(self,IDX,ADP,ADO,DATA):
+        CMD = 0x07  # BRD
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def LRD(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0A  # LRD
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def APWR(self,IDX,ADP,ADO,DATA):
+        CMD = 0x02  # APWR
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def FPWR(self,IDX,ADP,ADO,DATA):
+        CMD = 0x05  # FPWR
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def BWR(self,IDX,ADP,ADO,DATA):
+        CMD = 0x08  # BWR
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def LWR(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0B  # LWR
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def APRW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x03  # APRW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def FPRW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x06  # FPRW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def BRW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x09  # BRW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def LRW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0C  # LRW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def ARMW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0D  # ARMW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def FRMW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0E  # FRMW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+    def FRMW(self,IDX,ADP,ADO,DATA):
+        CMD = 0x0E  # FRMW
+        C = 0
+        NEXT = 0
+        IRQ = 0x0000
+        WKC = 0x0000
+        self.socket_write(CMD,IDX,ADP,ADO,C,NEXT,IRQ,DATA,WKC)
+
+        
