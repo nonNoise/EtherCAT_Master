@@ -2,7 +2,7 @@ import socket
 import struct
 
 class MasterEtherCAT:
-    def __init__(self,NicName):
+    def __init__(self,NickName):
         poat = 0x88A4
         self.cat = socket.socket(socket.PF_PACKET,socket.SOCK_RAW)
         timeval = struct.pack('ll', 0, 1)
