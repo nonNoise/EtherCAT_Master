@@ -52,6 +52,7 @@ class MasterEtherCAT:
         #for i in range(len(cat_scoket)):
             #print ('[%d]: 0x{:02x}'.format(cat_scoket[i]) % (i))
         self.cat.send(bytes(cat_scoket))
+        
     def socket_read(self):
         recv = self.cat.recv(1024)
         cat_PDUfream=[0]*len(recv)
@@ -74,15 +75,17 @@ class MasterEtherCAT:
         cat_frame = [0]*2
         cat_frame[0] = len(cat_PDUfream)
         cat_frame[1] =  0x10 | ((0x700&len(cat_PDUfream))>>8)
-        print("CMD= 0x{:02x}".format(CMD))
-        print("IDX= 0x{:02x}".format(IDX))
-        print("ADP= 0x{:04x}".format(ADP))
-        print("ADO= 0x{:04x}".format(ADO))
-        print("LEN= 0x{:04x}".format(LEN))
-        print("IRQ= 0x{:04x}".format(IRQ))
-        for i in range(LEN):
-            print ('DATA[%d]: 0x{:02X}'.format(DATA[i]) % (i))
-        print("WKC= 0x{:04x}".format(WKC))
+        #print("-"*30)
+        #print("CMD= 0x{:02x}".format(CMD))
+        #print("IDX= 0x{:02x}".format(IDX))
+        #print("ADP= 0x{:04x}".format(ADP))
+        #print("ADO= 0x{:04x}".format(ADO))
+        #print("LEN= 0x{:04x}".format(LEN))
+        #print("IRQ= 0x{:04x}".format(IRQ))
+        #for i in range(LEN):
+        #    print ('DATA[%d]: 0x{:02X}'.format(DATA[i]) % (i))
+        #print("WKC= 0x{:04x}".format(WKC))
+        return (DATA,WKC)
         
     def APRD(self,IDX,ADP,ADO,DATA):
         CMD = 0x01  # APRD
