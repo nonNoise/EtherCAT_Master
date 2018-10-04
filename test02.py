@@ -2,48 +2,62 @@ import pyMasterEtherCAT
 import time
 cat = pyMasterEtherCAT.MasterEtherCAT("enp0s25")
 
+ADP = 0x0000-1
 
 def EEPROM_SetUp():
-    cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0500,DATA=[0x02])
+    cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0500,DATA=[0x02])
     cat.socket_read()
-    cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0500,DATA=[0x00])
+    #time.sleep(0.1)
+    cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0500,DATA=[0x00])
     cat.socket_read()
-
+    #time.sleep(0.1)
+    
 def EEPROM_Stasus(enable=0x00,command=0x00):
     d = command<<8 | enable
-    cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0502,DATA=[d&0xFF,(d>>8)&0xFF])
+    cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0502,DATA=[d&0xFF,(d>>8)&0xFF])
+    #time.sleep(0.05)
     (DATA,WKC) = cat.socket_read()
+    #time.sleep(0.05)
     while True:
-        cat.APRD(IDX=0x00,ADP=0x0000,ADO=0x0502,DATA=[0x00,0x00])
+        cat.APRD(IDX=0x00,ADP=ADP,ADO=0x0502,DATA=[0x00,0x00])
+        #time.sleep(0.05)
         (DATA,WKC) = cat.socket_read()
+        #time.sleep(0.05)
         #print("S= 0x{:04x}".format(DATA[0]|DATA[1]<<8))
         d = DATA[0]&0xFF | DATA[1]<<8
         if d&0x8000 == 0:
             break
+    #time.sleep(0.1)
     return (DATA,WKC)
     
 def EEPROM_AddrSet(addr=0x0000):
-    cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0504,DATA=[addr&0xFF,(addr>>8)&0xFF])
+    cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0504,DATA=[addr&0xFF,(addr>>8)&0xFF])
+    #time.sleep(0.05)
     (DATA,WKC) = cat.socket_read()
+    #time.sleep(0.05)
     return (DATA,WKC)
     
 def EEPROM_Read():
-    cat.APRD(IDX=0x00,ADP=0x0000,ADO=0x0508,DATA=[0x00,0x00])
+    cat.APRD(IDX=0x00,ADP=ADP,ADO=0x0508,DATA=[0x00,0x00])
+    #time.sleep(0.05)
     (DATA,WKC) = cat.socket_read()
+    #time.sleep(0.05)
     return (DATA,WKC)
 
 def EEPROM_Write(data):
-    cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0508,DATA=[data&0xFF,(data>>8)&0xFF])
+    cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0508,DATA=[data&0xFF,(data>>8)&0xFF])
+    #time.sleep(0.05)
     (DATA,WKC) = cat.socket_read()
+    #time.sleep(0.05)
     return (DATA,WKC)
 
 def CatREAD(addr):
     ADDR = addr
-    cat.APRD(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[0x00,0x00])
+    cat.APRD(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[0x00,0x00])
     (DATA,WKC) = cat.socket_read()
     return (DATA,WKC) 
 
-cat.APRD(IDX=0x00,ADP=0x0000,ADO=0x0E08,DATA=[0x00,0x00])
+cat.APRD(IDX=0x00,ADP=ADP,ADO=0x0E08,DATA=[0x00,0x00])
 cat.socket_read()
 
 #--- RUN LED  ---------
@@ -57,19 +71,13 @@ cat.socket_read()
 print("="*30)
 """
 #--- EEPROM SetUp ---------
-
-
-EEPROM_SetUp()
-
 """
+EEPROM_SetUp()
 for i in range(0x0080):
     EEPROM_AddrSet(i)
     EEPROM_Write(0)
     EEPROM_Stasus(enable=0x01,command=0x02)
-    time.sleep(0.005)
-"""
-
-"""   
+    time.sleep(0.01)
 d = [0x0180,0xFF00,0x0000,0x00FF,0x0000,0x0000,0x0000,0x0065]
 #04 0F 00 44 10 27 F0 FF
 #d = [0x0F04,0x4400,0x2710,0xFFFF,0x0000,0x0000,0x0000,0x0065]
@@ -78,19 +86,27 @@ for i in range(8):
     EEPROM_Write(d[i])
     EEPROM_Stasus(enable=0x01,command=0x02)
     time.sleep(0.01)
-"""
 time.sleep(0.01)
 EEPROM_AddrSet(0x0008)
 EEPROM_Write(0x0A68)
 EEPROM_Stasus(enable=0x01,command=0x02)
 time.sleep(0.01)
 
-
 for i in range(0x0080):
     EEPROM_AddrSet(i)
     EEPROM_Stasus(enable=0x00,command=0x01)
     (DATA,WKC) = EEPROM_Read()
     print("READ[0x{:04x}]= 0x{:04x}".format(i,DATA[0]|DATA[1]<<8))
+"""
+
+EEPROM_SetUp()
+EEPROM_Stasus(enable=0x00,command=0x04)
+
+ADDR = 0x0120
+data = 0x0002
+cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+(DATA,WKC) = cat.socket_read()
+print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
 ADDR = 0x0140
 (DATA,WKC) = CatREAD(ADDR)
@@ -108,17 +124,17 @@ print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
 ADDR = 0x0120
 data = 0x0002
-cat.APWR(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
 (DATA,WKC) = cat.socket_read()
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 ADDR = 0x0120
 data = 0x0004
-cat.APWR(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
 (DATA,WKC) = cat.socket_read()
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 ADDR = 0x0120
 data = 0x0008
-cat.APWR(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
 (DATA,WKC) = cat.socket_read()
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
@@ -128,7 +144,7 @@ print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
 ADDR = 0x0F00
 data = 0x00FF
-cat.APWR(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
 (DATA,WKC) = cat.socket_read()
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
@@ -136,7 +152,10 @@ while 1:
     for i in range(0xFFFF):
         ADDR = 0x0F10
         data = i#0x00FF
-        cat.APWR(IDX=0x00,ADP=0x0000,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+        try:
+            cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+        except BlockingIOError:
+            pass
         #(DATA,WKC) = cat.socket_read()
         #print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
         #time.sleep(0.01)

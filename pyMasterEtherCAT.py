@@ -1,11 +1,12 @@
 import socket
 import struct
+import time
 
 class MasterEtherCAT:
     def __init__(self,NickName):
         poat = 0x88A4
         self.cat = socket.socket(socket.PF_PACKET,socket.SOCK_RAW)
-        timeval = struct.pack('ll', 0, 1)
+        timeval = struct.pack('ll', 0,1)
         self.cat.setsockopt(socket.SOL_SOCKET,socket.SO_RCVTIMEO,timeval)
         self.cat.setsockopt(socket.SOL_SOCKET,socket.SO_SNDTIMEO,timeval)
         self.cat.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, 1)
@@ -54,7 +55,8 @@ class MasterEtherCAT:
         self.cat.send(bytes(cat_scoket))
         
     def socket_read(self):
-        recv = self.cat.recv(1024)
+        #time.sleep(0.1)
+        recv = self.cat.recv(1023)
         cat_PDUfream=[0]*len(recv)
         for i in range(len(recv)):
             if(i>=16):
