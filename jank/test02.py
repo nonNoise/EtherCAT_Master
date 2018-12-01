@@ -1,8 +1,9 @@
-import pyMasterEtherCAT
-import time
-cat = pyMasterEtherCAT.MasterEtherCAT("enp0s25")
+from pyEtherCAT import MasterEtherCAT
 
-ADP = 0x0000-1
+import time
+cat = MasterEtherCAT.MasterEtherCAT("enp0s25")
+
+ADP = 0x0000-3
 
 def EEPROM_SetUp():
     cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0500,DATA=[0x02])
@@ -62,14 +63,15 @@ cat.socket_read()
 
 #--- RUN LED  ---------
 """
-cat.APWR(IDX=0x00,ADP=0x0000,ADO=0x0138,DATA=[0x1D,0x00])
-cat.socket_read()
-cat.APWR(IDX=0x00,ADP=0xFFFF,ADO=0x0138,DATA=[0x1D,0x00])
-cat.socket_read()
-cat.APWR(IDX=0x00,ADP=0xFFFE,ADO=0x0138,DATA=[0x1D,0x00])
-cat.socket_read()
-print("="*30)
+cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0138,DATA=[0x1D,0x00])
+print(cat.socket_read())
 """
+#cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0138,DATA=[0x1D,0x00])
+#cat.socket_read()
+#cat.APWR(IDX=0x00,ADP=ADP,ADO=0x0138,DATA=[0x1D,0x00])
+#cat.socket_read()
+print("="*30)
+
 #--- EEPROM SetUp ---------
 """
 EEPROM_SetUp()
@@ -121,7 +123,7 @@ ADDR = 0x0152
 (DATA,WKC) = CatREAD(ADDR)
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
 
-
+"""
 ADDR = 0x0120
 data = 0x0002
 cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
@@ -147,15 +149,33 @@ data = 0x00FF
 cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
 (DATA,WKC) = cat.socket_read()
 print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
+"""
 
 while 1:
-    for i in range(0xFFFF):
-        ADDR = 0x0F10
-        data = i#0x00FF
-        try:
+    STEP = 0.0002
+    for q in range(180):
+        for i in range(8):
+            ADDR = 0x0F10
+            data1 = [0x01,0x03,0x02,0x06,0x04,0x0C,0x08,0x09]#i#0x00FF
+            #data1 = [0x09,0x03,0x06,0x0C]#i#0x00FF
+            data = data1[i]
+            #print("0x%02x" % i)
             cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
-        except BlockingIOError:
-            pass
+            (DATA,WKC) = cat.socket_read()
+            time.sleep(STEP)
+    time.sleep(1)
+    for q in range(180):
+        for i in range(7,-1,-1):
+            ADDR = 0x0F10
+            data1 = [0x01,0x03,0x02,0x06,0x04,0x0C,0x08,0x09]#i#0x00FF
+            #data1 = [0x09,0x03,0x06,0x0C]#i#0x00FF
+            data = data1[i]
+            #print("0x%02x" % i)
+            cat.APWR(IDX=0x00,ADP=ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
+            (DATA,WKC) = cat.socket_read()
+            time.sleep(STEP)
+    time.sleep(1)
+
         #(DATA,WKC) = cat.socket_read()
         #print("[0x{:04x}]= 0x{:04x}".format(ADDR,DATA[0]|DATA[1]<<8))
         #time.sleep(0.01)
