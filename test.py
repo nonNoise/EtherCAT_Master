@@ -11,13 +11,13 @@ import time
 #============================================================================#
 # ここから簡易ライブラリ
 #============================================================================#
-def EtherCAT_Init(ADP):
+def EtherCAT_Init():
     cat = MasterEtherCAT.MasterEtherCAT("enp0s25")  #ネットワークカードのアドレスを記載
-    cat.EEPROM_SetUp(ADP) # EEPROMの設定、特に変更不要
-    cat.EEPROM_Stasus(enable=0x00,command=0x04) # EEPROMの設定、特に変更不要
-    cat.ADP = ADP
+    
     return cat
 def EtherCAT_SetUp(cat):
+    cat.EEPROM_SetUp(cat.ADP) # EEPROMの設定、特に変更不要
+    cat.EEPROM_Stasus(enable=0x00,command=0x04) # EEPROMの設定、特に変更不要
     ADDR = 0x0120 # AL 制御レジスタ
     data = 0x0002 # 2h: 動作前ステートを要求する
     cat.APWR(IDX=0x00,ADP=cat.ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
@@ -54,15 +54,59 @@ def EtherCAT_GPIO_Out(cat,data):
 
 
 
-ADP = 0x0000 -1 # PCから1台目は０、２台目以降は-1していく
-cat = EtherCAT_Init(ADP)    # EtherCATのネットワーク初期設定
+cat = EtherCAT_Init()    # EtherCATのネットワーク初期設定
+
+cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
+EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
+EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
+
+cat.ADP = 0x0000 -1  # PCから1台目は０、２台目以降は-1していく
 EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
 EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
 
 while 1:
-    EtherCAT_GPIO_Out(cat,0xFFFF);
+    TIME = 0.006
+    #EtherCAT_GPIO_Out(cat,0xFFFF);
+    #EtherCAT_GPIO_Out(cat,0x0000);
+    cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x0001<<i);
+        time.sleep(TIME)
+    EtherCAT_GPIO_Out(cat,0x0000);
+    cat.ADP = 0x0000 -1  # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x0001<<i);
+        time.sleep(TIME)
+    EtherCAT_GPIO_Out(cat,0x0000);
+    cat.ADP = 0x0000 -2  # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x0001<<i);
+        time.sleep(TIME)
     EtherCAT_GPIO_Out(cat,0x0000);
 
+    #time.sleep(0.1)
+
+    cat.ADP = 0x0000-2  # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x8000>>i);
+        time.sleep(TIME)
+    EtherCAT_GPIO_Out(cat,0x0000);
+    cat.ADP = 0x0000-1  # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x8000>>i);
+        time.sleep(TIME)
+    EtherCAT_GPIO_Out(cat,0x0000);
+    cat.ADP = 0x0000   # PCから1台目は０、２台目以降は-1していく
+    EtherCAT_GPIO_Out(cat,0x0000);
+    for i in range(16):
+        EtherCAT_GPIO_Out(cat,0x8000>>i);
+        time.sleep(TIME)
+    EtherCAT_GPIO_Out(cat,0x0000);
 
     #for i in range(0xFFFF):
-    #    EtherCAT_GPIO_Out(cat1,i);
+    #    EtherCAT_GPIO_Out(cat,i);
