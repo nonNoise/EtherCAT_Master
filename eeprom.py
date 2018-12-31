@@ -24,8 +24,8 @@ time.sleep(0.01)
 
 # EEPROM ベンダーID
 cat.EEPROM_AddrSet(0x0008)
-#cat.EEPROM_Write(0x0A68)
-cat.EEPROM_Write(0x0000)
+cat.EEPROM_Write(0x0A68)
+#cat.EEPROM_Write(0x0000)
 
 # EEPROM モード切替
 cat.EEPROM_Stasus(enable=0x01,command=0x02)

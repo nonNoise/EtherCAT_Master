@@ -12,7 +12,7 @@ import time
 # ここから簡易ライブラリ
 #============================================================================#
 def EtherCAT_Init():
-    cat = MasterEtherCAT.MasterEtherCAT("enp0s25")  #ネットワークカードのアドレスを記載
+    cat = MasterEtherCAT.MasterEtherCAT("eth0")  #ネットワークカードのアドレスを記載
     
     return cat
 def EtherCAT_SetUp(cat):
@@ -56,57 +56,30 @@ def EtherCAT_GPIO_Out(cat,data):
 
 cat = EtherCAT_Init()    # EtherCATのネットワーク初期設定
 
+#-- EtherCATのステートマシンを実行に移す処理
 cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
 EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
 EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
 
-cat.ADP = 0x0000 -1  # PCから1台目は０、２台目以降は-1していく
+#-- EtherCATのステートマシンを実行に移す処理
+cat.ADP = 0x0000 -1  #例　これは2台目　繋がってなければ必要ない
 EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
 EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
 
+#-- EtherCATのステートマシンを実行に移す処理
+cat.ADP = 0x0000 -2  #例　これは3台目 繋がってなければ必要ない
+EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
+EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
+
+#-- 1台目のLEDをシフトする
 while 1:
     TIME = 0.006
-    #EtherCAT_GPIO_Out(cat,0xFFFF);
-    #EtherCAT_GPIO_Out(cat,0x0000);
-    cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x0001<<i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
-    cat.ADP = 0x0000 -1  # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x0001<<i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
-    cat.ADP = 0x0000 -2  # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x0001<<i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
-
-    #time.sleep(0.1)
-
-    cat.ADP = 0x0000-2  # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x8000>>i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
-    cat.ADP = 0x0000-1  # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x8000>>i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
-    cat.ADP = 0x0000   # PCから1台目は０、２台目以降は-1していく
-    EtherCAT_GPIO_Out(cat,0x0000);
-    for i in range(16):
-        EtherCAT_GPIO_Out(cat,0x8000>>i);
-        time.sleep(TIME)
-    EtherCAT_GPIO_Out(cat,0x0000);
+    for n in range(10):
+        cat.ADP = 0x0000
+        for i in range(16):
+            EtherCAT_GPIO_Out(cat,0x0001<<i);
+            time.sleep(TIME)
+        EtherCAT_GPIO_Out(cat,0x0000);
 
     #for i in range(0xFFFF):
     #    EtherCAT_GPIO_Out(cat,i);
