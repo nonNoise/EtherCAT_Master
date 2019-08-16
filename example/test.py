@@ -3,11 +3,11 @@
 from pyEtherCAT import MasterEtherCAT
 import time
 import os
-import psutil
+import signal
+import aseqdump
+import threading
 
-
-
-#============================================================================#
+#============================================================================
 # C95用の簡易EtherCATパッケージです。
 # 本来は細かいパケットに付いて理解を深めた上で仕組みを構築していきますが、
 # 説明も実験も追いつかず、ひとまずGPIOで高速にON/OFF出来る部分だけを纏めました。
@@ -16,9 +16,8 @@ import psutil
 #============================================================================#
 # ここから簡易ライブラリ
 #============================================================================#
-def EtherCAT_Init(nic):
-    cat = MasterEtherCAT.MasterEtherCAT(nic)  #ネットワークカードのアドレスを記載
-    
+def EtherCAT_Init():
+    cat = MasterEtherCAT.MasterEtherCAT("enp0s25")  #ネットワークカードのアドレスを記載
     return cat
 def EtherCAT_SetUp(cat):
     cat.EEPROM_SetUp(cat.ADP) # EEPROMの設定、特に変更不要
@@ -56,65 +55,84 @@ def EtherCAT_GPIO_Out(cat,data):
 #============================================================================#
 # ここまで　簡易ライブラリ
 #============================================================================#
-
-
-
-cat = EtherCAT_Init("eth0")    # EtherCATのネットワーク初期設定
+cat = EtherCAT_Init()    # EtherCATのネットワーク初期設定
 #-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
-EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
-EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
-
-#-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000 -1  #例　これは2台目　繋がってなければ必要ない
-EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
-EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
-
-#-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000 -2  #例　これは3台目 繋がってなければ必要ない
-EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
-EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
-
-#-- 1台目のLEDをシフトする
-TIME = 0.1
 cat.ADP = 0x0000
-
-import signal
-import time
+EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
+EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
+cat.ADP = 0x0000-1
+EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
+EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
 
 flag = 0
 CNT = 0
+STEP = 0
+DATA = [0x01,0x00,0x00,0x01]
+data = 0x0000
+Ch =0
+def RUN(arg1, arg2):
+    global flag
+    global CNT
+    global STEP
+    global data
 
-try:
+    if  (flag == 0):
+        cat.ADP = 0x0000
+        EtherCAT_GPIO_Out(cat,0x0001<<data)
+        if(data<=15):
+            cat.ADP = 0x0000-1
+            EtherCAT_GPIO_Out(cat,0x0000)
+        else:
+            cat.ADP = 0x0000-1
+            EtherCAT_GPIO_Out(cat,0x0001<<(data-16))
+        
+        STEP = STEP +1
+        flag =0
+    else:
+        #EtherCAT_GPIO_Out(cat,0x0000)
+        flag =1
+        CNT = CNT+1
+
+Hz = 1000
+TIME = 1.0/Hz
+signal.signal(signal.SIGALRM, RUN)
+signal.setitimer(signal.ITIMER_REAL,TIME/2, TIME/2)
+
+
+def Note():
+    midi = aseqdump.aseqdump("24:1")
     while 1:
-        #time.sleep(TIME)
-        cat.ADP = 0x0000 -0
-        EtherCAT_GPIO_Out(cat,0xFFFF);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -1
-        EtherCAT_GPIO_Out(cat,0xFFFF);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -2
-        EtherCAT_GPIO_Out(cat,0xFFFF);
-        time.sleep(TIME)
-        #for i in range(16):
-            #time.sleep(TIME)
-            #EtherCAT_GPIO_Out(cat,0x0001<<i);
-        #for i in range(3):
-        cat.ADP = 0x0000 -0
-        EtherCAT_GPIO_Out(cat,0x0000);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -1
-        EtherCAT_GPIO_Out(cat,0x0000);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -2
-        EtherCAT_GPIO_Out(cat,0x0000);
-        time.sleep(TIME)
-            #EtherCAT_GPIO_Out(cat,0x0000);
+        onoff,key,velocity = midi.Note_get()
+        if(onoff == ""):
+            continue
+        #data = int(value)
+        print("Note: %s , %s , %s" % (onoff,key,velocity))
 
-        #for i in range(0xFFFF):
-        #    EtherCAT_GPIO_Out(cat,i);
-except KeyboardInterrupt:
-    EtherCAT_GPIO_Out(cat,0x0000);
-    print("")
-    print("End.")
+def Control():
+    global data
+    midi = aseqdump.aseqdump("24:2")
+    while 1:
+        Ch,value = midi.Control_get()
+        if(Ch == ""):
+            continue
+        print("Control: %s , %s" % (Ch,value))
+
+def Pitch():
+    midi = aseqdump.aseqdump("24:1")
+    while 1:
+        Ch,value = midi.Pitch_get()
+        if(Ch == ""):
+            continue
+        print("Pitch: %s , %s" % (Ch,value))
+
+
+thread_1 = threading.Thread(target=Note)
+thread_1.start()
+
+thread_2 = threading.Thread(target=Control)
+thread_2.start()
+
+thread_3 = threading.Thread(target=Pitch)
+thread_3.start()
+while 1:
+    pass

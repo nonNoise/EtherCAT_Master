@@ -2,21 +2,20 @@
 Python EtherCAT Master lib
 ==================================================================
 
+What is Thise. これはなに？
+-------------------------------------------------------------------
 
-NAME
------------------------------------------------------------------
+これはEtherCATを試すためのサンプルソースです。
+
+EtherCATのマスタープログラムをPython3(Socket)で記述しています。
 
 pyMasterEtherCAT
 
 
-CLASSES
------------------------------------------------------------------
 
-    MasterEtherCAT
-    
-    class MasterEtherCAT
-     |  Methods defined here:
-     |  
+API 
+-------------------------------------------------------------------
+
      |  APRD(self, IDX, ADP, ADO, DATA)
      |  
      |  APRW(self, IDX, ADP, ADO, DATA)
@@ -50,4 +49,5 @@ CLASSES
      |  socket_read(self)
      |  
      |  socket_write(self, CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
-     
+
+

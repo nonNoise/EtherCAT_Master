@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EtherCATInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="EtherCATInfo.xsd" Version="1.6">
+	<Vendor>
+		<Id>#xE00004D8</Id>
+		<Name>Microchip Technology Inc</Name>
+	</Vendor>
+	<Descriptions>
+		<Groups>
+			<Group>
+				<Type>LAN9252-DIGIO</Type>
+				<Name LcId="1033">LAN9252-DIGIO</Name>
+      			<ImageData16x14>424DF8010000000000003600000028000000100000000E0000000100100000000000C2010000120B0000120B00000000000000000000FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F397B8C75C6748474A5744A75947AFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F8B7521746374847420706374837441746374FF7FFF7FFF7FFF7FFF7FFF7FFF7F00708374A47400709C7FA47463744274E674FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F00702074CD79FF7FFF7F00740070FF7FFF7FFF7FFF7FFF7FFF7F5A7FFF7FFF7F947A0070FF7FFF7FFF7F0070D67AFF7FFF7FD67AFF7FFF7FFF7F0070FF7FFF7F00709C7FFF7FFF7FCD796274FF7FFF7FFF7F00705A7FFF7FFF7F6274E774AD754975FF7FFF7FFF7F0070FF7FFF7FFF7FA5740875FF7FFF7FFF7F497541740070FF7FFF7FFF7F0070187FFF7FFF7FF77A2174FF7FFF7FFF7FFF7F937A217400709C7FFF7F317A0070C674FF7FFF7F00705A7FFF7FFF7FFF7FFF7FFF7F087541740070397B0070A4742170EF790775297DFF7FFF7FFF7FFF7FFF7FFF7FFF7FAC79007000708474A47484742170A57CFF7F7B6FFF7FFF7FFF7FFF7FFF7FFF7FFF7F397F8B75C6748474C574AC75FF7FD6561863FF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7FFF7F0000</ImageData16x14>		
+			</Group>
+		</Groups>
+		<Devices>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000020" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Input (No DC)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Inputs</Fmmu>
+				<Sm StartAddress="#x1000" ControlByte="#x44" Enable="1" >Inputs</Sm>
+				<Sm StartAddress="#x1001" ControlByte="#x44" Enable="1" >Inputs</Sm>
+				<TxPdo Fixed="1" Sm="0">
+					<Index>#x1600</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3001</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Input</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</TxPdo>
+				<TxPdo Fixed="1" Sm="1">
+					<Index>#x1601</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3001</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Input</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</TxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(0f);Bidirectional mode (04); 
+						latch enabled open drain active low(55);
+						pulse length (5527);
+						Direction -input(0000)
+					-->
+					<ConfigData>040f045555270000</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000021" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);Bidirectional mode (04); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>040304441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000022" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 Dig. bidirectional 8 Ch. Output/8 Ch. Input (No DC)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Fmmu>Inputs</Fmmu>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x1000" ControlByte="0" Enable="1">Inputs</Sm>
+				<RxPdo Fixed="1" Sm="0">
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<TxPdo Fixed="1" Sm="1">
+					<Index>#x1600</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3001</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Input</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</TxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active low ,output updated when watchdog triggers,output reset after watchdog expires(0f); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -8 output / 8 input(f0ff)
+					-->
+					<ConfigData>04030f441027f0ff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000023" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) Watchdog enabled(150=0x6)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);Bidirectional mode - watchdog enabled(06); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>040306441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000024" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0xc)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);Bidirectional mode , output reset after watchdog expires(0C); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>04030c441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000025" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0xe)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active high ,output reset after watchdog expires(0E); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>04030e441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000026" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0x5)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active low(05); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>040305441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000027" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0x7)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active low ,output data updated on watchdog expiry(07); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>040307441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000028" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0xd)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active low ,output reset after watchdog expires(0D); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>04030d441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+			<Device Physics="YY">
+				<Type ProductCode="#x00000029" RevisionNo="#x00000001">LAN9252-DIGIO-2PORT-BIDIR</Type>
+				<Name LcId="1033"><![CDATA[9252 16 Ch. Dig. bidirectional Output (No DC) (150=0xf)]]></Name>
+				<GroupType>LAN9252-DIGIO</GroupType>
+				<Fmmu>Outputs</Fmmu>
+				<Sm StartAddress="#x0f00" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<Sm StartAddress="#x0f01" ControlByte="#x44" Enable="1" OpOnly="1">Outputs</Sm>
+				<RxPdo Fixed="1" Sm="0">     
+					<Index>#x1a00</Index>
+					<Name>Byte 0</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>1</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<RxPdo Fixed="1" Sm="1">
+					<Index>#x1a01</Index>
+					<Name>Byte 1</Name>
+					<Entry>
+						<Index>#x3101</Index>
+						<SubIndex>2</SubIndex>
+						<BitLen>8</BitLen>
+						<Name>Output</Name>
+						<DataType>BITARR8</DataType>
+					</Entry>
+				</RxPdo>
+				<Eeprom>
+					<ByteSize>2048</ByteSize>
+					<!--PDI=DIGIO(04);Enable enhanced link detection and DC - dont care - 
+						device emulation -on(03);
+						Bidirectional mode , outvalid polarity - active low ,output updated when watchdog triggers,output reset after watchdog expires(0f); 
+						sync out enabled - push pull active low(44);
+						pulse length (1027);
+						Direction -output(ffff)
+					-->
+					<ConfigData>04030f441027ffff</ConfigData> 
+				</Eeprom>
+			</Device>
+		</Devices>
+	</Descriptions>
+</EtherCATInfo>

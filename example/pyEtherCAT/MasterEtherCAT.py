@@ -248,18 +248,4 @@ class MasterEtherCAT:
         (DATA,WKC) = self.socket_read()
         #time.sleep(0.05)
         return (DATA,WKC)
-    def EthereCAT_Reset(self):
-        ADDR = 0x0041 # Reset レジスタ
-        data = 0x0052 # 'R'
-        self.APWR(IDX=0x00,ADP=self.ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
-        (DATA,WKC) = self.socket_read()
-        ADDR = 0x0041 # Reset レジスタ
-        data = 0x0045 # 'E'
-        self.APWR(IDX=0x00,ADP=self.ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
-        (DATA,WKC) = self.socket_read()
-        ADDR = 0x0041 # Reset レジスタ
-        data = 0x0053 # 'S'
-        self.APWR(IDX=0x00,ADP=self.ADP,ADO=ADDR,DATA=[data&0xFF,(data>>8)&0xFF])
-        (DATA,WKC) = self.socket_read()
-        return (DATA,WKC)
         

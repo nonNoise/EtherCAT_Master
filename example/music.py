@@ -16,8 +16,8 @@ import psutil
 #============================================================================#
 # ここから簡易ライブラリ
 #============================================================================#
-def EtherCAT_Init(nic):
-    cat = MasterEtherCAT.MasterEtherCAT(nic)  #ネットワークカードのアドレスを記載
+def EtherCAT_Init():
+    cat = MasterEtherCAT.MasterEtherCAT("enp0s25")  #ネットワークカードのアドレスを記載
     
     return cat
 def EtherCAT_SetUp(cat):
@@ -59,24 +59,12 @@ def EtherCAT_GPIO_Out(cat,data):
 
 
 
-cat = EtherCAT_Init("eth0")    # EtherCATのネットワーク初期設定
-#-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000  # PCから1台目は０、２台目以降は-1していく
-EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
-EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
+cat = EtherCAT_Init()    # EtherCATのネットワーク初期設定
 
 #-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000 -1  #例　これは2台目　繋がってなければ必要ない
+cat.ADP = 0x0000
 EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
 EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
-
-#-- EtherCATのステートマシンを実行に移す処理
-cat.ADP = 0x0000 -2  #例　これは3台目 繋がってなければ必要ない
-EtherCAT_SetUp(cat)         # EtherCATスレーブの初期設定
-EtherCAT_GPIOMode(cat,0xFFFF)         # EtherCATスレーブのGPIO方向設定　0:入力 1:出力
-
-#-- 1台目のLEDをシフトする
-TIME = 0.1
 cat.ADP = 0x0000
 
 import signal
@@ -84,6 +72,44 @@ import time
 
 flag = 0
 CNT = 0
+STEP = 0
+DATA = [0x01,0x00,0x00,0x01]
+def RUN(arg1, arg2):
+    global flag
+    global CNT
+    global STEP
+    #print(time.time())
+    #print(flag)
+    if  (STEP == 0):
+        EtherCAT_GPIO_Out(cat,DATA[0])
+        STEP = STEP +1
+    elif(STEP == 1):
+        EtherCAT_GPIO_Out(cat,DATA[1])
+        STEP = STEP +1
+    elif(STEP == 2):
+        EtherCAT_GPIO_Out(cat,DATA[2])
+        STEP = STEP +1
+    elif(STEP == 3):
+        EtherCAT_GPIO_Out(cat,DATA[3])
+        STEP =0
+    else:
+        EtherCAT_GPIO_Out(cat,0x0000)
+        flag =1
+        CNT = CNT+1
+
+Hz = 8
+TIME = 1.0/Hz
+signal.signal(signal.SIGALRM, RUN)
+signal.setitimer(signal.ITIMER_REAL,TIME/2, TIME/2)
+while 1:
+    pass
+
+while True:
+    #Hz = Hz+1
+    #TIME = 1.0/Hz    
+    #signal.signal(signal.SIGALRM, RUN)
+    #signal.setitimer(signal.ITIMER_REAL,TIME/2, TIME/2)
+    time.sleep(1)
 
 try:
     while 1:
@@ -91,23 +117,10 @@ try:
         cat.ADP = 0x0000 -0
         EtherCAT_GPIO_Out(cat,0xFFFF);
         time.sleep(TIME)
-        cat.ADP = 0x0000 -1
-        EtherCAT_GPIO_Out(cat,0xFFFF);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -2
-        EtherCAT_GPIO_Out(cat,0xFFFF);
-        time.sleep(TIME)
         #for i in range(16):
             #time.sleep(TIME)
             #EtherCAT_GPIO_Out(cat,0x0001<<i);
         #for i in range(3):
-        cat.ADP = 0x0000 -0
-        EtherCAT_GPIO_Out(cat,0x0000);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -1
-        EtherCAT_GPIO_Out(cat,0x0000);
-        time.sleep(TIME)
-        cat.ADP = 0x0000 -2
         EtherCAT_GPIO_Out(cat,0x0000);
         time.sleep(TIME)
             #EtherCAT_GPIO_Out(cat,0x0000);
