@@ -6,16 +6,30 @@ import time
 class MasterEtherCAT_v2:
 
     def __init__(self, NickName):
-        poat = 0x88A4
-        self.self = socket.socket(socket.PF_PACKET, socket.SOCK_RAW)
+        """
+        param str NickName
+        """
+        ether_type = 0x88A4  # 'EtherType' const used to create Ethernet Header
+        self.lowlevel = socket.socket(socket.PF_PACKET, socket.SOCK_RAW)
         timeval = struct.pack('ll', 0, 1)
-        self.self.setsockopt(socket.SOL_SOCKET, socket.SO_RCVTIMEO, timeval)
-        self.self.setsockopt(socket.SOL_SOCKET, socket.SO_SNDTIMEO, timeval)
-        self.self.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, 1)
-        self.self.settimeout(100)
-        self.self.bind((NickName, poat))
+        self.lowlevel.setsockopt(socket.SOL_SOCKET, socket.SO_RCVTIMEO, timeval)
+        self.lowlevel.setsockopt(socket.SOL_SOCKET, socket.SO_SNDTIMEO, timeval)
+        self.lowlevel.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, 1)
+        self.lowlevel.settimeout(100)
+        self.lowlevel.bind((NickName, ether_type))
 
     def build_socket(self, CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC):
+        """
+        param int CMD: Command
+        param int IDX: Index
+        param int ADP: ADdress Position 16 bits (MSB half of 32bit)
+        param int ADO: ADdress Offset 16 bits (LSB half of 32 bit)
+        param int C
+        param int NEXT
+        param int IRQ
+        param int DATA
+        param int WKC: working counter 
+        """
         pduflame = [0] * (len(DATA) + 13)
         pduflame[0] = CMD               # CMD (1 byte)
         pduflame[1] = IDX               # IDX (1 byte)
@@ -27,14 +41,14 @@ class MasterEtherCAT_v2:
         pduflame[7] = (len(DATA) & 0xFF00) >> 8
         pduflame[8] = (IRQ & 0xFF)            # IRQ (2 byte)
         pduflame[9] = (0x01 & NEXT) << 16 | (0x01 & C) << 15 | (
-            IRQ & 0x7F00) >> 8            # IRQ (2 byte)
+            IRQ & 0x7F00) >> 8  # IRQ (2 byte)
         for i in range(len(DATA)):
-            #print ('[{:d}]: 0x{:02x}'.format(i,pduflame[i+10]))
+            # print ('[{:d}]: 0x{:02x}'.format(i,pduflame[i+10]))
             pduflame[10 + i] = DATA[i]
         pduflame[10 + len(DATA)] = (WKC & 0xFF)    # WKC (2 byte)
         pduflame[11 + len(DATA)] = (WKC & 0xFF00) >> 8    # WKC (2 byte)
         # for i in range(len(scoket)):
-        #print ('[%d]: 0x{:02x}'.format(scoket[i]) % (i))
+        #     print ('[%d]: 0x{:02x}'.format(scoket[i]) % (i))
         return pduflame
 
     def socket_write(self, pduflame):
@@ -58,11 +72,11 @@ class MasterEtherCAT_v2:
         scoket.extend(frame)
         scoket.extend(pduflame)
         #----------------------------------------------------#
-        self.self.send(bytes(self_scoket))
+        self.lowlevel.send(bytes(self_scoket))
 
     def socket_read(self):
         # time.sleep(0.1)
-        recv = self.self.recv(1023)
+        recv = self.lowlevel.recv(1023)
         pduflame = [0] * len(recv)
         for i in range(len(recv)):
             if(i >= 16):
@@ -96,18 +110,19 @@ class MasterEtherCAT_v2:
             else:
                 break
         # print("-"*30)
-        #print("CMD= 0x{:02x}".format(CMD))
-        #print("IDX= 0x{:02x}".format(IDX))
-        #print("ADP= 0x{:04x}".format(ADP))
-        #print("ADO= 0x{:04x}".format(ADO))
-        #print("LEN= 0x{:04x}".format(LEN))
-        #print("IRQ= 0x{:04x}".format(IRQ))
+        # print("CMD= 0x{:02x}".format(CMD))
+        # print("IDX= 0x{:02x}".format(IDX))
+        # print("ADP= 0x{:04x}".format(ADP))
+        # print("ADO= 0x{:04x}".format(ADO))
+        # print("LEN= 0x{:04x}".format(LEN))
+        # print("IRQ= 0x{:04x}".format(IRQ))
         # for i in range(LEN):
-        #    print ('DATA[%d]: 0x{:02X}'.format(DATA[i]) % (i))
-        #print("WKC= 0x{:04x}".format(WKC))
+        #     print ('DATA[%d]: 0x{:02X}'.format(DATA[i]) % (i))
+        # print("WKC= 0x{:04x}".format(WKC))
         return buff
 
     def APRD(self, IDX, ADP, ADO, DATA):
+        """ Auto increment physical read """
         CMD = 0x01  # APRD
         C = 0
         NEXT = 0
@@ -116,6 +131,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def FPRD(self, IDX, ADP, ADO, DATA):
+        """ Configured address physical read """
         CMD = 0x04  # FPRD
         C = 0
         NEXT = 0
@@ -124,6 +140,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def BRD(self, IDX, ADP, ADO, DATA):
+        """ Broadcast read """
         CMD = 0x07  # BRD
         C = 0
         NEXT = 0
@@ -132,6 +149,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def LRD(self, IDX, ADP, ADO, DATA):
+        """  Logical memory read """
         CMD = 0x0A  # LRD
         C = 0
         NEXT = 0
@@ -140,6 +158,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def APWR(self, IDX, ADP, ADO, DATA):
+        """ Auto increment physical write """
         CMD = 0x02  # APWR
         C = 0
         NEXT = 0
@@ -148,6 +167,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def FPWR(self, IDX, ADP, ADO, DATA):
+        """ Configured address physical write """
         CMD = 0x05  # FPWR
         C = 0
         NEXT = 0
@@ -156,6 +176,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def BWR(self, IDX, ADP, ADO, DATA):
+        """ Broadcast write """
         CMD = 0x08  # BWR
         C = 0
         NEXT = 0
@@ -164,6 +185,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def LWR(self, IDX, ADP, ADO, DATA):
+        """ Logical memory write """
         CMD = 0x0B  # LWR
         C = 0
         NEXT = 0
@@ -172,6 +194,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def APRW(self, IDX, ADP, ADO, DATA):
+        """ Auto increment physical read write """
         CMD = 0x03  # APRW
         C = 0
         NEXT = 0
@@ -180,6 +203,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def FPRW(self, IDX, ADP, ADO, DATA):
+        """ Configured address physical read write """
         CMD = 0x06  # FPRW
         C = 0
         NEXT = 0
@@ -188,6 +212,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def BRW(self, IDX, ADP, ADO, DATA):
+        """ Broadcast read write """
         CMD = 0x09  # BRW
         C = 0
         NEXT = 0
@@ -196,6 +221,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def LRW(self, IDX, ADP, ADO, DATA):
+        """ Logical memory read write """
         CMD = 0x0C  # LRW
         C = 0
         NEXT = 0
@@ -204,6 +230,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def ARMW(self, IDX, ADP, ADO, DATA):
+        """ Auto increment physical read multiple write """
         CMD = 0x0D  # ARMW
         C = 0
         NEXT = 0
@@ -212,6 +239,7 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def FRMW(self, IDX, ADP, ADO, DATA):
+        """ Configured address physical read multiple write """
         CMD = 0x0E  # FRMW
         C = 0
         NEXT = 0
@@ -220,6 +248,8 @@ class MasterEtherCAT_v2:
         return self.build_socket(CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC)
 
     def EEPROM_SetUp(self, ADP):
+        """
+        """
         self.ADP = ADP
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=0x0500, DATA=[0x02])
         self.socket_read()
@@ -229,6 +259,8 @@ class MasterEtherCAT_v2:
         # time.sleep(0.1)
 
     def EEPROM_Stasus(self, enable=0x00, command=0x00):
+        """
+        """
         d = command << 8 | enable
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=0x0502,
                   DATA=[d & 0xFF, (d >> 8) & 0xFF])
@@ -240,7 +272,7 @@ class MasterEtherCAT_v2:
             # time.sleep(0.05)
             (DATA, WKC) = self.socket_read()
             # time.sleep(0.05)
-            #print("S= 0x{:04x}".format(DATA[0]|DATA[1]<<8))
+            # print("S= 0x{:04x}".format(DATA[0]|DATA[1]<<8))
             d = DATA[0] & 0xFF | DATA[1] << 8
             if d & 0x8000 == 0:
                 break
@@ -248,6 +280,8 @@ class MasterEtherCAT_v2:
         return (DATA, WKC)
 
     def EEPROM_AddrSet(self, addr=0x0000):
+        """
+        """
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=0x0504,
                   DATA=[addr & 0xFF, (addr >> 8) & 0xFF])
         # time.sleep(0.05)
@@ -256,6 +290,8 @@ class MasterEtherCAT_v2:
         return (DATA, WKC)
 
     def EEPROM_Read(self):
+        """
+        """
         self.APRD(IDX=0x00, ADP=self.ADP, ADO=0x0508, DATA=[0x00, 0x00])
         # time.sleep(0.05)
         (DATA, WKC) = self.socket_read()
@@ -263,6 +299,8 @@ class MasterEtherCAT_v2:
         return (DATA, WKC)
 
     def EEPROM_Write(self, data):
+        """
+        """
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=0x0508,
                   DATA=[data & 0xFF, (data >> 8) & 0xFF])
         # time.sleep(0.05)
@@ -271,6 +309,8 @@ class MasterEtherCAT_v2:
         return (DATA, WKC)
 
     def EthereCAT_Reset(self):
+        """
+        """
         ADDR = 0x0041  # Reset レジスタ
         data = 0x0052  # 'R'
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=ADDR,
