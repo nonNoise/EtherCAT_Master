@@ -9,7 +9,7 @@ class MasterEtherCAT:
         :param str NickName:
         """
         ether_type = 0x88A4
-        self.lowlevel = socket.socket(socket.PF_PACKET, socket.SOCK_RAW)
+        self.lowlevel = socket.socket(socket.PF_PACKET, socket.SOCK_RAW) # CAUTION: does not work on OSX
         timeval = struct.pack('ll', 0, 1)
         self.lowlevel.setsockopt(
             socket.SOL_SOCKET, socket.SO_RCVTIMEO, timeval)
