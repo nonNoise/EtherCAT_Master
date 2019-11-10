@@ -38,7 +38,7 @@ class MasterEtherCAT:
         self_PDUfream[9] = (0x01 & NEXT) << 16 | (0x01 & C) << 15 | (
             IRQ & 0x7F00) >> 8            # IRQ (2 byte)
         for i in range(len(DATA)):
-            #print ('[{:d}]: 0x{:02x}'.format(i,self_PDUfream[i+10]))
+            # print ('[{:d}]: 0x{:02x}'.format(i,self_PDUfream[i+10]))
             self_PDUfream[10+i] = DATA[i]
         self_PDUfream[10+len(DATA)] = (WKC & 0xFF)    # WKC (2 byte)
         self_PDUfream[11+len(DATA)] = (WKC & 0xFF00) >> 8    # WKC (2 byte)
@@ -54,7 +54,7 @@ class MasterEtherCAT:
         self_scoket.extend(self_PDUfream)
         #----------------------------------------------------#
         # for i in range(len(self_scoket)):
-        #print ('[%d]: 0x{:02x}'.format(self_scoket[i]) % (i))
+        # print ('[%d]: 0x{:02x}'.format(self_scoket[i]) % (i))
         self.self.send(bytes(self_scoket))
 
     def socket_read(self):
@@ -82,15 +82,15 @@ class MasterEtherCAT:
         self_frame[0] = len(self_PDUfream)
         self_frame[1] = 0x10 | ((0x700 & len(self_PDUfream)) >> 8)
         # print("-"*30)
-        #print("CMD= 0x{:02x}".format(CMD))
-        #print("IDX= 0x{:02x}".format(IDX))
-        #print("ADP= 0x{:04x}".format(ADP))
-        #print("ADO= 0x{:04x}".format(ADO))
-        #print("LEN= 0x{:04x}".format(LEN))
-        #print("IRQ= 0x{:04x}".format(IRQ))
+        # print("CMD= 0x{:02x}".format(CMD))
+        # print("IDX= 0x{:02x}".format(IDX))
+        # print("ADP= 0x{:04x}".format(ADP))
+        # print("ADO= 0x{:04x}".format(ADO))
+        # print("LEN= 0x{:04x}".format(LEN))
+        # print("IRQ= 0x{:04x}".format(IRQ))
         # for i in range(LEN):
         #    print ('DATA[%d]: 0x{:02X}'.format(DATA[i]) % (i))
-        #print("WKC= 0x{:04x}".format(WKC))
+        # print("WKC= 0x{:04x}".format(WKC))
         return (DATA, WKC)
 
     def APRD(self, IDX, ADP, ADO, DATA):
@@ -226,7 +226,7 @@ class MasterEtherCAT:
             # time.sleep(0.05)
             (DATA, WKC) = self.socket_read()
             # time.sleep(0.05)
-            #print("S= 0x{:04x}".format(DATA[0]|DATA[1]<<8))
+            # print("S= 0x{:04x}".format(DATA[0]|DATA[1]<<8))
             d = DATA[0] & 0xFF | DATA[1] << 8
             if d & 0x8000 == 0:
                 break
