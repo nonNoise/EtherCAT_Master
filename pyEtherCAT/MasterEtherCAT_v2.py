@@ -7,7 +7,7 @@ class MasterEtherCAT_v2:
 
     def __init__(self, NickName):
         """
-        param str NickName
+        :param str NickName:
         """
         ether_type = 0x88A4  # 'EtherType' const used to create Ethernet Header
         self.lowlevel = socket.socket(socket.PF_PACKET, socket.SOCK_RAW)
@@ -20,15 +20,15 @@ class MasterEtherCAT_v2:
 
     def build_socket(self, CMD, IDX, ADP, ADO, C, NEXT, IRQ, DATA, WKC):
         """
-        param int CMD: Command
-        param int IDX: Index
-        param int ADP: ADdress Position 16 bits (MSB half of 32bit)
-        param int ADO: ADdress Offset 16 bits (LSB half of 32 bit)
-        param int C
-        param int NEXT
-        param int IRQ
-        param int DATA
-        param int WKC: working counter 
+        :param int CMD: Command
+        :param int IDX: Index
+        :param int ADP: ADdress Position 16 bits (MSB half of 32bit)
+        :param int ADO: ADdress Offset 16 bits (LSB half of 32 bit)
+        :param int C:
+        :param int NEXT:
+        :param int IRQ:
+        :param list DATA:
+        :param int WKC: working counter
         """
         pduflame = [0] * (len(DATA) + 13)
         pduflame[0] = CMD               # CMD (1 byte)
@@ -65,45 +65,45 @@ class MasterEtherCAT_v2:
         frame[0] = len(pduflame)
         frame[1] = 0x10 | ((0x700 & len(pduflame)) >> 8)
         #----------------------------------------------------#
-        scoket = []
-        scoket.extend(send_mac)
-        scoket.extend(receive_mac)
-        scoket.extend(self_head)
-        scoket.extend(frame)
-        scoket.extend(pduflame)
+        socket = []
+        socket.extend(send_mac)
+        socket.extend(receive_mac)
+        socket.extend(self_head)
+        socket.extend(frame)
+        socket.extend(pduflame)
         #----------------------------------------------------#
-        self.lowlevel.send(bytes(self_scoket))
+        self.lowlevel.send(bytes(socket))
 
     def socket_read(self):
         # time.sleep(0.1)
         recv = self.lowlevel.recv(1023)
-        pduflame = [0] * len(recv)
+        pduframe = [0] * len(recv)
         for i in range(len(recv)):
             if(i >= 16):
                 #print ('[{:d}]: 0x{:02x}'.format(i-16,recv[i]))
-                pduflame[i - 16] = recv[i]
+                pduframe[i - 16] = recv[i]
         offset = 0
         cnt = 0
         buff = []
         while 1:
             if(i > offset):
-                CMD = pduflame[0 + offset]              # CMD (1 byte)
-                IDX = pduflame[1 + offset]              # IDX (1 byte)
+                CMD = pduframe[0 + offset]              # CMD (1 byte)
+                IDX = pduframe[1 + offset]              # IDX (1 byte)
                 # ADP (2 byte)
-                ADP = pduflame[2 + offset] | (pduflame[3 + offset] << 8)
+                ADP = pduframe[2 + offset] | (pduframe[3 + offset] << 8)
                 # ADO (2 byte)
-                ADO = pduflame[4 + offset] | (pduflame[5 + offset] << 8)
+                ADO = pduframe[4 + offset] | (pduframe[5 + offset] << 8)
                 # LEN (2 byte)
-                LEN = pduflame[6 + offset] | (pduflame[7 + offset] << 8)
+                LEN = pduframe[6 + offset] | (pduframe[7 + offset] << 8)
                 # IRQ (2 byte)
-                IRQ = pduflame[8 + offset] | (pduflame[9 + offset] << 8)
+                IRQ = pduframe[8 + offset] | (pduframe[9 + offset] << 8)
                 DATA = [0] * LEN
                 for i in range(LEN):
                     #print ('[{:d}]: 0x{:02x}'.format(i,pduflame[10+i]))
-                    DATA[i] = pduflame[10 + offset + i]
+                    DATA[i] = pduframe[10 + offset + i]
                 # WKC (2 byte)
-                WKC = pduflame[9 + offset + LEN +
-                               1] | (pduflame[9 + offset + LEN + 2] << 8)
+                WKC = pduframe[9 + offset + LEN +
+                               1] | (pduframe[9 + offset + LEN + 2] << 8)
                 buff.append({CMD, IDX, ADP, ADO, LEN, IRQ, DATA, WKC})
                 cnt = cnt + 1
                 offset = 9 + LEN + 2
@@ -300,6 +300,7 @@ class MasterEtherCAT_v2:
 
     def EEPROM_Write(self, data):
         """
+        :param data:
         """
         self.APWR(IDX=0x00, ADP=self.ADP, ADO=0x0508,
                   DATA=[data & 0xFF, (data >> 8) & 0xFF])

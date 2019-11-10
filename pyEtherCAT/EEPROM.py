@@ -1,6 +1,8 @@
-import pyMasterEtherCAT
+from . import MasterEtherCAT_v2
 import time
-cat = pyMasterEtherCAT.MasterEtherCAT("enp0s25")
+
+
+cat = MasterEtherCAT_v2("enp0s25")
 
 ADP = 0x00000-2
 
