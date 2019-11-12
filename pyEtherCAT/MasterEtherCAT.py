@@ -51,17 +51,16 @@ class MasterEtherCAT:
         PDUframe[6] = (len(DATA) & 0xFF)    # LEN (2 byte)
         PDUframe[7] = (len(DATA) & 0xFF00) >> 8
         PDUframe[8] = (IRQ & 0xFF)            # IRQ (2 byte)
-        PDUframe[9] = (0x01 & NEXT) << 16 | (0x01 & C) << 15 | (
-            IRQ & 0x7F00) >> 8            # IRQ (2 byte)
+        PDUframe[9] = (IRQ & 0x00FF)         # IRQ (2 byte)
         for i in range(len(DATA)):
             # print ('[{:d}]: 0x{:02x}'.format(i,self_PDUfream[i+10]))
             PDUframe[10 + i] = DATA[i]
         PDUframe[10 + len(DATA)] = (WKC & 0xFF)    # WKC (2 byte)
         PDUframe[11 + len(DATA)] = (WKC & 0xFF00) >> 8    # WKC (2 byte)
+        #----------------------------------------------------#
         _frame = [0] * 2
         _frame[0] = len(PDUframe)
         _frame[1] = 0x10 | ((0x700 & len(PDUframe)) >> 8)
-        #----------------------------------------------------#
         _socket = []
         _socket.extend(self.send_mac)
         _socket.extend(self.receive_mac)
@@ -74,7 +73,6 @@ class MasterEtherCAT:
         self.lowlevel.send(bytes(_socket))
 
     def socket_read(self):
-        # time.sleep(0.1)
         recv = self.lowlevel.recv(1023)
         PDUframe = [0]*len(recv)
         for i in range(len(recv)):
@@ -94,9 +92,9 @@ class MasterEtherCAT:
             DATA[i] = PDUframe[10 + i]
         # WKC (2 byte)
         WKC = PDUframe[9 + LEN + 1] | (PDUframe[9 + LEN + 2] << 8)
-        self_frame = [0] * 2
-        self_frame[0] = len(PDUframe)
-        self_frame[1] = 0x10 | ((0x700 & len(PDUframe)) >> 8)
+        #frame = [0] * 2
+        #frame[0] = len(PDUframe)
+        #frame[1] = 0x10 | ((0x700 & len(PDUframe)) >> 8)
         # print("-"*30)
         # print("CMD= 0x{:02x}".format(CMD))
         # print("IDX= 0x{:02x}".format(IDX))

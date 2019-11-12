@@ -17,9 +17,7 @@ import psutil
 #============================================================================#
 def EtherCAT_Init(nic):
     cat = MasterEtherCAT.MasterEtherCAT(nic)  # ネットワークカードのアドレスを記載
-
     return cat
-
 
 def EtherCAT_SetUp(cat):
     cat.EEPROM_SetUp(cat.ADP)  # EEPROMの設定、特に変更不要
@@ -58,16 +56,14 @@ def EtherCAT_GPIOMode(cat, data):
     (DATA, WKC) = cat.socket_read()
     print("[0x{:04x}]= 0x{:04x}".format(ADDR, DATA[0] | DATA[1] << 8))
 
-
 def EtherCAT_GPIO_Out(cat, data):
     ADDR = 0x0F10
-    cat.APWR(IDX=0x00, ADP=cat.ADP, ADO=ADDR, DATA=[
-             data & 0xFF, (data >> 8) & 0xFF])
+    cat.APWR(IDX=0x00, ADP=cat.ADP, ADO=ADDR, DATA=[data & 0xFF, (data >> 8) & 0xFF])
     #(DATA,WKC) = cat.socket_read()
+
 #============================================================================#
 # ここまで　簡易ライブラリ
 #============================================================================#
-
 
 def main():
 

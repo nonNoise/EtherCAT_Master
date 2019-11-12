@@ -17,7 +17,7 @@ def CRC(data):
 
 def main():
 
-    cat = MasterEtherCAT.MasterEtherCAT("enp0s25")
+    cat = MasterEtherCAT.MasterEtherCAT("eth0")
     cat.ADP = 0x000000
 
     """
